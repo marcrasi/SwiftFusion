@@ -4,7 +4,7 @@ import TensorFlow
 public struct Point2: Equatable, Differentiable, JacobianEvaluatable {
   public var x, y: Double
 
-  @differentiable
+  @differentiable(linear)
   public init(_ x: Double, _ y: Double) {
     (self.x, self.y) = (x, y)
   }
@@ -19,17 +19,17 @@ public struct Point2: Equatable, Differentiable, JacobianEvaluatable {
     (lhs.x, lhs.y) == (rhs.x, rhs.y)
   }
 
-  @differentiable
+  @differentiable(linear)
   public static func + (a: Point2, b: Point2) -> Point2 {
     Point2(a.x + b.x, a.y + b.y)
   }
 
-  @differentiable
+  @differentiable(linear)
   public static prefix func - (a: Point2) -> Point2 {
     Point2(-a.x, -a.y)
   }
   
-  @differentiable
+  @differentiable(linear)
   public static func - (a: Point2, b: Point2) -> Point2 {
     Point2(a.x - b.x, a.y - b.y)
   }

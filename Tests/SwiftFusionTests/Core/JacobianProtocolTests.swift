@@ -63,7 +63,7 @@ class JacobianProtocolTests: XCTestCase {
     // If we remove the type we will have:
     // a '@differentiable' function can only be formed from
     // a reference to a 'func' or a literal closure
-    let f: @differentiable(_ pts: [Point2]) -> Point2 = { (_ pts: [Point2]) -> Point2 in
+    let f: @differentiable (_ pts: [Point2]) -> Point2 = { (_ pts: [Point2]) -> Point2 in
       let d = pts[1] - pts[0]
 
       return d
@@ -71,7 +71,10 @@ class JacobianProtocolTests: XCTestCase {
 
     let j = jacobian(of: f, at: pts)
     
-    // print("j(f) = \(j as AnyObject)")
+    // Forward-mode (JVP)
+    // Does not work at the moment
+    // let (_, d) = valueWithDifferential(at: pts, in: f)
+    // print("g(f) = \(d as AnyObject)")
 
     // print("Point2.TangentVector.basisVectors() = \(Point2.TangentVector.basisVectors() as AnyObject)")
     
@@ -107,5 +110,16 @@ class JacobianProtocolTests: XCTestCase {
     print("]")
     */
     XCTAssertEqual(expected, j)
+  }
+  
+  /// Simplest forward mode autodiff
+  /// This works but more complicated examples fail
+  func testForwardDiff() {
+    func func_to_diff(x: Float) -> Float {
+      return x
+    }
+    let (y, differential) = valueWithDifferential(at: 4, in: func_to_diff)
+    XCTAssertEqual(4, y)
+    XCTAssertEqual(1, differential(1))
   }
 }

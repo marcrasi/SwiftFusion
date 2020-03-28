@@ -17,6 +17,16 @@ func _vjpAtan2wrap(_ s: Double, _ c: Double) -> (value: Double, pullback: (Doubl
   return (theta, { v in (v * c / normSquared, -v * s / normSquared) })
 }
 
+@derivative(of: atan2wrap)
+func _jvpAtan2wrap(_ s: Double, _ c: Double) -> (value: Double, differential: (Double, Double) -> Double) {
+  let theta = atan2(s, c)
+  let normSquared: Double = c * c + s * s
+  // { (_ pts: [Point2]) -> Point2 in
+  return (theta, { (_ ds: Double, dc: Double) -> Double in
+    return (ds * c / normSquared) - (dc * s / normSquared)
+  })
+}
+
 // @derivative(of: bar)
 // public func _(_ x: Float) -> (value: Float, differential: (Float) -> Float) {
 //   (x, { dx in dx })
