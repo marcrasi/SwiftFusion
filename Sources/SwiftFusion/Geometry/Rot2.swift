@@ -97,15 +97,7 @@ public struct Rot2: Equatable, Differentiable, KeyPathIterable {
 
   @differentiable
   public var theta: Double {
-    atan2wrap(s_, c_)
-  }
-
-  @usableFromInline
-  @derivative(of: theta)
-  func _vjpTheta() -> (value: Double, pullback: (Double.TangentVector) -> Rot2.TangentVector) {
-    return (theta, { v in
-      v
-    })
+    atan2wrap(s, c)
   }
 }
 

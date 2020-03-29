@@ -39,13 +39,10 @@ final class Pose2Tests: XCTestCase {
         let error = ŷ.rot_.theta * ŷ.rot_.theta + ŷ.t_.x * ŷ.t_.x + ŷ.t_.y * ŷ.t_.y
         loss = loss + (error / 10)
 
-        return loss
+        return -loss
       }
 
       // print("𝛁loss", 𝛁loss)
-      𝛁loss.rot_ = -𝛁loss.rot_
-      𝛁loss.t_.x = -𝛁loss.t_.x
-      𝛁loss.t_.y = -𝛁loss.t_.y
       pT1.move(along: 𝛁loss)
     }
 

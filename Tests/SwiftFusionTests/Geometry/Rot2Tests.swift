@@ -71,8 +71,8 @@ final class Rot2Tests: XCTestCase {
 
   static var allTests = [
     ("testBetweenIdentitiesTrivial", testBetweenIdentitiesTrivial),
-//    ("testBetweenIdentities", testBetweenIdentities),
+    ("testBetweenIdentities", testBetweenIdentitiesTrivial),
     ("testBetweenDerivatives", testBetweenDerivatives),
-//    ("testRot2Derivatives", testRot2Derivatives),
+    ("testRot2Derivatives", testGradientDescent),
   ]
 }

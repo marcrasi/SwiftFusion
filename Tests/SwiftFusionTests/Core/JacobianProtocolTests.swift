@@ -38,14 +38,47 @@ class JacobianProtocolTests: XCTestCase {
       return d
     }
 
+    XCTAssertEqual(f(pts), Pose2(2, 2, .pi/2))
     let j = jacobian(of: f, at: pts)
     
+    /// expected is a 3x2 matrix, values in Pose2's tangent space
+    /// In GTSAM, it corresponds to
+    /// ```
+    /// Matrix expectedH1 = (Matrix(3,3) <<
+    ///     0.0,-1.0,-2.0,
+    ///     1.0, 0.0,-2.0,
+    ///     0.0, 0.0,-1.0
+    /// ).finished();
+    /// ```
+    /// In current SwiftFusion, it is
+    /// ```
+    /// [0.0, -1.0,  2.0]
+    /// [1.0,  0.0, -2.0]
+    /// [0.0,  0.0, -1.0]
+    /// ```
+    /// ```
+    /// Matrix expectedH2 = (Matrix(3,3) <<
+    ///      1.0, 0.0, 0.0,
+    ///      0.0, 1.0, 0.0,
+    ///      0.0, 0.0, 1.0
+    /// ).finished();
+    /// ```
+    /// In current SwiftFusion, it is
+    /// ```
+    ///  0.0, 1.0, 0.0
+    /// -1.0, 0.0, 0.0
+    ///  0.0, 0.0, 1.0
+    /// ```
     let expected: [Array<Pose2>.TangentVector] = [
       [Pose2.TangentVector(t_: Point2.TangentVector(x: 0, y: -1.0), rot_: 2.0), Pose2.TangentVector(t_: Point2.TangentVector(x: 0, y: 1.0), rot_: 0.0)],
       [Pose2.TangentVector(t_: Point2.TangentVector(x: 1.0, y: 0), rot_: -2.0), Pose2.TangentVector(t_: Point2.TangentVector(x: -1.0, y: 0), rot_: 0.0)],
       [Pose2.TangentVector(t_: Point2.TangentVector(x: 0.0, y: 0.0), rot_: -1.0), Pose2.TangentVector(t_: Point2.TangentVector(x: 0.0, y: 0.0), rot_: 1.0)]
     ]
     
+    print(Pose2.TangentVector.basisVectors())
+    for i in 0..<3 {
+      print(j[i][1].recursivelyAllKeyPaths(to:Double.self).map { j[i][1][keyPath: $0] })
+    }
     // TODO(fan): Find a better way to do approximate comparison
     XCTAssert(
       expected.recursivelyAllKeyPaths(to:Double.self)
@@ -63,7 +96,7 @@ class JacobianProtocolTests: XCTestCase {
     // If we remove the type we will have:
     // a '@differentiable' function can only be formed from
     // a reference to a 'func' or a literal closure
-    let f: @differentiable (_ pts: [Point2]) -> Point2 = { (_ pts: [Point2]) -> Point2 in
+    let f: @differentiable (_ pts: [Point2]) -> Point2 = { pts in
       let d = pts[1] - pts[0]
 
       return d
@@ -73,8 +106,8 @@ class JacobianProtocolTests: XCTestCase {
     
     // Forward-mode (JVP)
     // Does not work at the moment
-    // let (_, d) = valueWithDifferential(at: pts, in: f)
-    // print("g(f) = \(d as AnyObject)")
+//     let (_, d) = valueWithDifferential(at: pts, in: f)
+//     print("g(f) = \(d as AnyObject)")
 
     // print("Point2.TangentVector.basisVectors() = \(Point2.TangentVector.basisVectors() as AnyObject)")
     
@@ -115,11 +148,20 @@ class JacobianProtocolTests: XCTestCase {
   /// Simplest forward mode autodiff
   /// This works but more complicated examples fail
   func testForwardDiff() {
-    func func_to_diff(x: Float) -> Float {
+    
+    let func_to_diff: @differentiable (_ x: Float) -> Float = { x in
       return x
     }
     let (y, differential) = valueWithDifferential(at: 4, in: func_to_diff)
     XCTAssertEqual(4, y)
     XCTAssertEqual(1, differential(1))
+  }
+    
+  func testMiscScratchPad() {
+    let f: @differentiable (_ x: [Point2]) -> Point2 = { x in
+      return x[1] - x[0]
+    }
+    let pts = [Point2(0,0), Point2(1,1)]
+    print(jacobian(of:f, at: pts))
   }
 }
