@@ -145,17 +145,18 @@ class JacobianProtocolTests: XCTestCase {
     XCTAssertEqual(expected, j)
   }
   
-  /// Simplest forward mode autodiff
-  /// This works but more complicated examples fail
-  func testForwardDiff() {
-    
-    let func_to_diff: @differentiable (_ x: Float) -> Float = { x in
-      return x
-    }
-    let (y, differential) = valueWithDifferential(at: 4, in: func_to_diff)
-    XCTAssertEqual(4, y)
-    XCTAssertEqual(1, differential(1))
-  }
+// Removed as forward mode is not in CI
+//  /// Simplest forward mode autodiff
+//  /// This works but more complicated examples fail
+//  func testForwardDiff() {
+//
+//    let func_to_diff: @differentiable (_ x: Float) -> Float = { x in
+//      return x
+//    }
+//    let (y, differential) = valueWithDifferential(at: 4, in: func_to_diff)
+//    XCTAssertEqual(4, y)
+//    XCTAssertEqual(1, differential(1))
+//  }
     
   func testMiscScratchPad() {
     let f: @differentiable (_ x: [Point2]) -> Point2 = { x in
