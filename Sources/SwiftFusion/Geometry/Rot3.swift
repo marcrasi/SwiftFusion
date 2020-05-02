@@ -13,15 +13,15 @@ public struct Rot3: Manifold, TangentStandardBasis, Equatable, KeyPathIterable {
   }
 
 // BUG(fan): will trigger ICE
-//  /// Construct from a rotation matrix, as doubles in *row-major* order
-//  @differentiable
-//  public init(_ r11 : Double, _ r12 : Double, _ r13 : Double,
-//              _ r21 : Double, _ r22 : Double, _ r23 : Double,
-//              _ r31 : Double, _ r32 : Double, _ r33 : Double) {
-//    self.init(coordinateStorage: Matrix3Coordinate(r11, r12, r13,
-//              r21, r22, r23,
-//              r31, r32, r33))
-//  }
+  /// Construct from a rotation matrix, as doubles in *row-major* order
+  @differentiable
+  public init(_ r11 : Double, _ r12 : Double, _ r13 : Double,
+              _ r21 : Double, _ r22 : Double, _ r23 : Double,
+              _ r31 : Double, _ r32 : Double, _ r33 : Double) {
+    self.init(coordinateStorage: Matrix3Coordinate(r11, r12, r13,
+              r21, r22, r23,
+              r31, r32, r33))
+  }
   public init() {
     self.init(coordinateStorage: Matrix3Coordinate(eye(rowCount: 3)))
   }
