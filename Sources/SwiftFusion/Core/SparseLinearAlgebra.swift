@@ -121,12 +121,19 @@ extension SparseMatrix {
       }
     }
 
-    self.init(
-      rows.flatMap { $0.scalars },
-      blocks: rows[0].blocks.map { columnRange in
-        MatrixRange(rowRange: 0..<rows.count, columnRange: columnRange)
+    var scalars: [Double] = []
+    scalars.reserveCapacity(rows.count * rows[0].blocks.map { $0.count }.reduce(0, +))
+    var blocks: [MatrixRange] = []
+    blocks.reserveCapacity(rows[0].blocks.count)
+    var rowOffset = 0
+    for columnRange in rows[0].blocks {
+      blocks.append(MatrixRange(rowRange: 0..<rows.count, columnRange: columnRange))
+      for row in rows {
+        scalars.append(contentsOf: row.scalars[rowOffset..<(rowOffset + columnRange.count)])
       }
-    )
+      rowOffset += columnRange.count
+    }
+    self.init(scalars, blocks: blocks)
   }
 }
 

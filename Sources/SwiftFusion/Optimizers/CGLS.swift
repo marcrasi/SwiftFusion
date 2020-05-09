@@ -36,25 +36,23 @@ public class CGLS {
     step += 1
     
     var r: Vector = b - linearMap * x // r(0) = b - A * x(0), the residual
-    print(r)
     var p = linearMap.dual(r) // p(0) = s(0) = A^T * r(0), residual in value space
-    print(p)
     var s = p // residual of normal equations
-    var gamma = s.norm // γ(0) = ||s(0)||^2
+    var gamma = s.squaredNorm // γ(0) = ||s(0)||^2
     
     while step < max_iteration {
       let q = linearMap * p // q(k) = A * p(k)
-      let alpha: Double = gamma / q.norm // α(k) = γ(k)/||q(k)||^2
+      let alpha: Double = gamma / q.squaredNorm // α(k) = γ(k)/||q(k)||^2
       x = x + (alpha * p) // x(k+1) = x(k) + α(k) * p(k)
       r = r + (-alpha) * q // r(k+1) = r(k) - α(k) * q(k)
       s = linearMap.dual(r) // s(k+1) = A.T * r(k+1)
       
-      let gamma_next = s.norm // γ(k+1) = ||s(k+1)||^2
+      let gamma_next = s.squaredNorm // γ(k+1) = ||s(k+1)||^2
       let beta: Double = gamma_next/gamma // β(k) = γ(k+1)/γ(k)
       gamma = gamma_next
       p = s + beta * p // p(k+1) = s(k+1) + β(k) * p(k)
       
-      if (alpha * p).norm < precision {
+      if (alpha * p).squaredNorm < precision {
         break
       }
       step += 1

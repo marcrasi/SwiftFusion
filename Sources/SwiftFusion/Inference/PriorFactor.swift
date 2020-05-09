@@ -61,6 +61,6 @@ public struct PriorFactor: NonlinearFactor {
 
   public func linearization(_ values: Values) -> (linearMap: SparseMatrix, bias: Vector) {
     let (error, linearMap) = valueWithJacobian(of: self.errorVector, at: values)
-    return (linearMap: linearMap, bias: Vector(error.scalars))
+    return (linearMap: linearMap, bias: Vector(error.scalars).scaled(by: -1))
   }
 }

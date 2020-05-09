@@ -64,9 +64,9 @@ func main() {
   // general purpose solver exists.
   var val = problem.initialGuess
   print("Initial error: \(problem.graph.error(val))")
-  for _ in 0..<10 {
+  for _ in 0..<50 {
     let gfg = problem.graph.linearization(val)
-    let optimizer = CGLS(precision: 1e-6, max_iteration: 20)
+    let optimizer = CGLS(precision: 1e-6, max_iteration: 200)
     var dx = Vector(zeros: 3 * val.count)
     optimizer.optimize(linearMap: gfg.linearMap, bias: gfg.bias, initial: &dx)
     for i in 0..<val.count {
