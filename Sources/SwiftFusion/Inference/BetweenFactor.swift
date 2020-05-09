@@ -77,12 +77,8 @@ public struct BetweenFactor: NonlinearFactor {
   
   @differentiable(wrt: values)
   public func errorVector(_ values: Values) -> Vector3 {
-    let values2 = values.withDerivative {
-      print($0)
-      withUnsafePointer(to: &$0) { print($0) }
-    }
     let error = between(
-      between(values2[key2, as: Pose2.self], values2[key1, as: Pose2.self]),
+      between(values[key2, as: Pose2.self], values[key1, as: Pose2.self]),
       difference
     )
     

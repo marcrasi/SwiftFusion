@@ -36,7 +36,9 @@ public class CGLS {
     step += 1
     
     var r: Vector = b - linearMap * x // r(0) = b - A * x(0), the residual
+    print(r)
     var p = linearMap.dual(r) // p(0) = s(0) = A^T * r(0), residual in value space
+    print(p)
     var s = p // residual of normal equations
     var gamma = s.norm // γ(0) = ||s(0)||^2
     

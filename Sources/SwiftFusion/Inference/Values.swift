@@ -58,10 +58,7 @@ public struct Values: Differentiable & KeyPathIterable {
     where T.TangentVector: FixedDimensionVector
   {
     let block = ranges[key]!
-    return (self[key, as: type], {
-              print("pulling back \($0)")
-              return SparseVector($0.scalars, block: block)
-            })
+    return (self[key, as: type], { SparseVector($0.scalars, block: block) })
   }
 
   // MARK: - Unorganized
