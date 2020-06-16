@@ -66,11 +66,25 @@ public struct NewJacobianFactor<
   }
 
   public func errorVector_linearComponent(_ x: Variables) -> ErrorVector {
-    return ErrorVector(jacobian.lazy.map { $0.dot(x) })
+    var r = ErrorVector.zero
+    jacobian.withUnsafeBufferPointer { jacRows in
+      r.withUnsafeMutableBufferPointer { rScalars in
+        for i in 0..<ErrorVector.dimension {
+          rScalars[i] = jacRows[i].dot(x)
+        }
+      }
+    }
+    return r
   }
 
   public func errorVector_linearComponent_adjoint(_ y: ErrorVector) -> Variables {
-    return zip(y.scalars, jacobian).lazy.map(*).reduce(Variables.zero, +)
+    y.withUnsafeBufferPointer { yScalars in
+      jacobian.withUnsafeBufferPointer { jacRows in
+        (0..<ErrorVector.dimension).reduce(into: Variables.zero) { (result, i) in
+          result += yScalars[i] * jacRows[i]
+        }
+      }
+    }
   }
 
   public typealias Linearization = Self
